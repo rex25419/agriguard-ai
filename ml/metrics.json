@@ -1,0 +1,24 @@
+{
+  "model_version": "1.0.0",
+  "model_type": "GradientBoostingRegressor",
+  "trained_at": "2026-08-21T02:30:39.078102Z",
+  "train_r2": 0.9847,
+  "test_r2": 0.9342,
+  "test_mae": 4.69,
+  "n_estimators": 400,
+  "features": [
+    "rainfall_mm",
+    "consecutive_dry_days",
+    "temperature_c",
+    "historical_avg_yield",
+    "current_soil_moisture_index"
+  ],
+  "feature_importances": {
+    "consecutive_dry_days": 0.5604,
+    "rainfall_mm": 0.3508,
+    "current_soil_moisture_index": 0.0542,
+    "temperature_c": 0.0194,
+    "historical_avg_yield": 0.0152
+  },
+  "dataset_rows": 3250
+}

@@ -1,0 +1,106 @@
+{
+  "_comment": "Scripted escalation sequence for districtId=1 (Vidarbha). The oracle relayer replays these 10 readings live on stage, each ~10 seconds apart. Scores climb from ~6 to 100, crossing the 90-threshold and triggering a 100% payout on PolicyManager.sol.",
+  "districtId": 1,
+  "sequence": [
+    {
+      "step": 1,
+      "date": "2024-09-01",
+      "rainfall_mm": 12.5,
+      "consecutive_dry_days": 1,
+      "temperature_c": 31.0,
+      "soil_moisture_index": 0.72,
+      "_verified_score": 6,
+      "_payout_tier": "0% — healthy season start"
+    },
+    {
+      "step": 2,
+      "date": "2024-09-04",
+      "rainfall_mm": 6.0,
+      "consecutive_dry_days": 3,
+      "temperature_c": 33.0,
+      "soil_moisture_index": 0.61,
+      "_verified_score": 20,
+      "_payout_tier": "0% — mild dip, no stress"
+    },
+    {
+      "step": 3,
+      "date": "2024-09-07",
+      "rainfall_mm": 2.0,
+      "consecutive_dry_days": 6,
+      "temperature_c": 34.5,
+      "soil_moisture_index": 0.50,
+      "_verified_score": 55,
+      "_payout_tier": "20% payout tier entered (score >= 40)"
+    },
+    {
+      "step": 4,
+      "date": "2024-09-10",
+      "rainfall_mm": 0.5,
+      "consecutive_dry_days": 9,
+      "temperature_c": 35.5,
+      "soil_moisture_index": 0.40,
+      "_verified_score": 74,
+      "_payout_tier": "60% payout tier entered (score >= 70)"
+    },
+    {
+      "step": 5,
+      "date": "2024-09-13",
+      "rainfall_mm": 0.0,
+      "consecutive_dry_days": 12,
+      "temperature_c": 36.5,
+      "soil_moisture_index": 0.31,
+      "_verified_score": 76,
+      "_payout_tier": "60% — drought worsening"
+    },
+    {
+      "step": 6,
+      "date": "2024-09-16",
+      "rainfall_mm": 0.0,
+      "consecutive_dry_days": 15,
+      "temperature_c": 37.5,
+      "soil_moisture_index": 0.22,
+      "_verified_score": 90,
+      "_payout_tier": "100% payout tier entered (score >= 90)"
+    },
+    {
+      "step": 7,
+      "date": "2024-09-19",
+      "rainfall_mm": 0.0,
+      "consecutive_dry_days": 18,
+      "temperature_c": 38.5,
+      "soil_moisture_index": 0.15,
+      "_verified_score": 92,
+      "_payout_tier": "100% — severe drought confirmed"
+    },
+    {
+      "step": 8,
+      "date": "2024-09-22",
+      "rainfall_mm": 0.0,
+      "consecutive_dry_days": 21,
+      "temperature_c": 39.5,
+      "soil_moisture_index": 0.09,
+      "_verified_score": 93,
+      "_payout_tier": "100% — catastrophic event"
+    },
+    {
+      "step": 9,
+      "date": "2024-09-25",
+      "rainfall_mm": 0.0,
+      "consecutive_dry_days": 30,
+      "temperature_c": 41.0,
+      "soil_moisture_index": 0.04,
+      "_verified_score": 100,
+      "_payout_tier": "100% MAX — full payout + policy deactivated"
+    },
+    {
+      "step": 10,
+      "date": "2024-09-28",
+      "rainfall_mm": 0.0,
+      "consecutive_dry_days": 42,
+      "temperature_c": 43.5,
+      "soil_moisture_index": 0.02,
+      "_verified_score": 100,
+      "_payout_tier": "100% MAX — total crop loss"
+    }
+  ]
+}

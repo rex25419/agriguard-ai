@@ -1,0 +1,7 @@
+{
+  "riskOracleAddress": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+  "policyManagerAddress": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+  "network": "localhost",
+  "oracleSignerAddress": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "deployedAt": "2026-08-20T21:49:05.915Z"
+}
