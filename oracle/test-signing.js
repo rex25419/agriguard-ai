@@ -20,7 +20,7 @@ async function testSigning() {
   
   // Hash payload exactly as the contract would
   const messageHash = ethers.solidityPackedKeccak256(
-    ["string", "uint8", "uint256"],
+    ["uint256", "uint8", "uint256"],
     [districtId, riskScore, timestamp]
   );
   

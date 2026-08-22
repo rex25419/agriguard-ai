@@ -5,7 +5,7 @@ This document defines the cryptographic signing scheme used by the Oracle Relaye
 ## Payload Definition
 
 The payload being signed consists of three data points:
-1. `districtId` (string): The unique identifier for the district (e.g., "1", "District_A").
+1. `districtId` (uint256): The unique identifier for the district (e.g., 1, 5).
 2. `riskScore` (uint8): The ML-generated risk score (0-100).
 3. `timestamp` (uint256): The UNIX timestamp of when the score was generated/fetched.
 
@@ -21,7 +21,7 @@ bytes32 messageHash = keccak256(abi.encodePacked(districtId, riskScore, timestam
 
 ```javascript
 const messageHash = ethers.solidityPackedKeccak256(
-    ["string", "uint8", "uint256"],
+    ["uint256", "uint8", "uint256"],
     [districtId, riskScore, timestamp]
 );
 ```
@@ -40,7 +40,7 @@ The `RiskOracle` smart contract should verify the signature by reconstructing th
 
 ```solidity
 function submitRiskScore(
-    string calldata districtId,
+    uint256 districtId,
     uint8 riskScore,
     uint256 timestamp,
     bytes calldata signature
