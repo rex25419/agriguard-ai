@@ -11,6 +11,7 @@ const Dashboard = () => {
   const [address, setAddress] = useState(null);
   const [policy, setPolicy] = useState(null);
   const [riskScore, setRiskScore] = useState(0);
+  const [scoreTimestamp, setScoreTimestamp] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const loadData = async () => {
@@ -20,15 +21,18 @@ const Dashboard = () => {
       setPolicy(fetchedPolicy);
       
       if (fetchedPolicy) {
-        const fetchedScore = await fetchCurrentRiskScore(fetchedPolicy.districtId);
-        setRiskScore(fetchedScore);
+        const { score, timestamp } = await fetchCurrentRiskScore(fetchedPolicy.districtId);
+        setRiskScore(score);
+        setScoreTimestamp(timestamp);
       } else {
         setRiskScore(0);
+        setScoreTimestamp(0);
       }
       setLoading(false);
     } else {
       setPolicy(null);
       setRiskScore(0);
+      setScoreTimestamp(0);
     }
   };
 
@@ -115,7 +119,7 @@ const Dashboard = () => {
           </div>
 
           <div>
-            <PayoutSimulator currentRisk={riskScore} policy={policy} onPayout={loadData} />
+            <PayoutSimulator currentRisk={riskScore} scoreTimestamp={scoreTimestamp} policy={policy} onPayout={loadData} />
           </div>
         </div>
       )}

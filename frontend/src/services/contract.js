@@ -15,7 +15,7 @@ export const initContracts = async (address) => {
     signer = await provider.getSigner(address);
   } else {
     // Fallback for headless browser testing or public access (Hardhat account #1)
-    provider = new ethers.JsonRpcProvider('https://agriguard-rpc.loca.lt');
+    provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
     signer = new ethers.Wallet("0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d", provider); // hardhat account #1
   }
 
@@ -55,7 +55,8 @@ export const fetchPolicyDetails = async (address) => {
           location: "District " + policy.districtId.toString(),
           basePremium: ethers.formatEther(policy.premiumPaid), // in ETH/MATIC
           maxPayout: ethers.formatEther(policy.sumInsured),
-          status: "Active"
+          status: "Active",
+          lastPayoutEpoch: Number(policy.lastPayoutEpoch)
         };
       }
     }
@@ -67,13 +68,16 @@ export const fetchPolicyDetails = async (address) => {
 };
 
 export const fetchCurrentRiskScore = async (districtId) => {
-  if (!riskOracle) return 0;
+  if (!riskOracle) return { score: 0, timestamp: 0 };
   try {
     const result = await riskOracle.getLatestScore(districtId);
-    return Number(result[0]); // riskScore is uint8
+    return {
+      score: Number(result[0]), // riskScore is uint8
+      timestamp: Number(result[1])
+    };
   } catch (error) {
     console.error("Error fetching risk score:", error);
-    return 0;
+    return { score: 0, timestamp: 0 };
   }
 };
 
@@ -126,7 +130,7 @@ export const triggerPayoutCheck = async (policyId) => {
 export const fetchAllEvents = async () => {
   if (!policyManager || !riskOracle) {
     // init with read-only provider if no address yet
-    const provider = new ethers.JsonRpcProvider('https://agriguard-rpc.loca.lt');
+    const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
     policyManager = new ethers.Contract(addresses.policyManagerAddress, PolicyManagerArtifact.abi, provider);
     riskOracle = new ethers.Contract(addresses.riskOracleAddress, RiskOracleArtifact.abi, provider);
   }

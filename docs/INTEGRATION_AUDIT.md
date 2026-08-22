@@ -26,6 +26,18 @@ This document records the findings from the initial integration audit across the
     *   Implemented `BuyPolicy.jsx` (with district selector) to enable actual policy purchases on-chain.
     *   Added real `checkAndPayout` calls to `PayoutSimulator.jsx`.
     *   Created `AdminView.jsx` to fetch and render raw on-chain events (RiskScoreUpdated, PayoutExecuted, PolicyPurchased) for transparency.
+    *   Caught raw EVM `CALL_EXCEPTION` errors in `PayoutSimulator.jsx` and translated them into clean UI notifications. Implemented on-chain epoch checks to gracefully disable the payout trigger button once a claim is made.
 
 ## 3. End-to-End Verification
-*(Pending live testing... Screenshots to follow)*
+
+The full stack has been successfully run locally and verified live:
+1. Local Hardhat node started and contracts deployed (dynamically generating `deployed-addresses.json`).
+2. ML FastAPI service running locally on port 8000.
+3. Oracle Relayer running in background, successfully passing ECDSA signature validation and pushing scores to the `RiskOracle.sol`.
+4. Vite dev server serving the frontend.
+5. Successfully connected wallet, purchased a policy, simulated a risk escalation via the relayer, triggered a payout, and verified all on-chain events appearing live in the Admin Transparency view.
+
+### Final End-to-End Flow Recording
+![Working End-to-End Flow](/Users/reshav/agriguard-ai/frontend/screenshots/end_to_end_flow.webp)
+
+*(Note: The above `.webp` file is an animated recording showcasing the full sequence: wallet connection → policy purchase → risk score update → payout execution → UI reflection).*

@@ -5,10 +5,12 @@ import { ethers } from 'ethers';
 
 const WalletConnect = ({ onConnect }) => {
   const [address, setAddress] = useState(null);
+  const [error, setError] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
 
   const connectWallet = async () => {
     setIsConnecting(true);
+    setError(null);
     try {
       if (window.ethereum) {
         const provider = new ethers.BrowserProvider(window.ethereum);
@@ -24,6 +26,7 @@ const WalletConnect = ({ onConnect }) => {
       }
     } catch (error) {
       console.error("Wallet connection failed", error);
+      setError("Failed to connect wallet: " + (error.message || error));
     } finally {
       setIsConnecting(false);
     }
@@ -31,6 +34,7 @@ const WalletConnect = ({ onConnect }) => {
 
   const disconnect = () => {
     setAddress(null);
+    setError(null);
     if (onConnect) onConnect(null);
   };
 
@@ -50,10 +54,13 @@ const WalletConnect = ({ onConnect }) => {
   }
 
   return (
-    <button onClick={connectWallet} disabled={isConnecting} className="btn btn-primary">
-      <Wallet size={20} />
-      {isConnecting ? 'Connecting...' : 'Connect Wallet'}
-    </button>
+    <div className="flex flex-col items-end gap-2">
+      <button onClick={connectWallet} disabled={isConnecting} className="btn btn-primary">
+        <Wallet size={20} />
+        {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+      </button>
+      {error && <div className="text-red-400 text-sm mt-1">{error}</div>}
+    </div>
   );
 };
 

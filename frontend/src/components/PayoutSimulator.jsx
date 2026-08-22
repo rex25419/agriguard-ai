@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { calculateGraduatedPayout, calculateNextPremium, triggerPayoutCheck } from '../services/contract';
 import { Calculator, Coins, TrendingUp } from 'lucide-react';
 
-const PayoutSimulator = ({ currentRisk, policy, onPayout }) => {
+const PayoutSimulator = ({ currentRisk, scoreTimestamp, policy, onPayout }) => {
   const [simulatedRisk, setSimulatedRisk] = useState(currentRisk);
   const [payout, setPayout] = useState(0);
   const [nextPremium, setNextPremium] = useState(0);
@@ -31,11 +31,17 @@ const PayoutSimulator = ({ currentRisk, policy, onPayout }) => {
       if (onPayout) onPayout();
     } catch (err) {
       console.error(err);
-      setError(err.message || 'Failed to trigger payout check');
+      if (err.message && err.message.includes("payout already claimed for this oracle epoch")) {
+        setError("Payout for this epoch has already been claimed.");
+      } else {
+        setError(err.message || 'Failed to trigger payout check');
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  const isClaimedForEpoch = policy && policy.lastPayoutEpoch > 0 && scoreTimestamp > 0 && policy.lastPayoutEpoch >= scoreTimestamp;
 
   if (!policy) return null;
 
@@ -95,9 +101,9 @@ const PayoutSimulator = ({ currentRisk, policy, onPayout }) => {
       <button 
         className="btn btn-primary mt-6 w-full"
         onClick={handleTriggerPayout}
-        disabled={loading || currentRisk < 40}
+        disabled={loading || currentRisk < 40 || isClaimedForEpoch}
       >
-        {loading ? 'Processing...' : 'Check & Trigger Real Payout'}
+        {loading ? 'Processing...' : isClaimedForEpoch ? 'Claimed for Current Epoch' : 'Check & Trigger Real Payout'}
       </button>
     </div>
   );
