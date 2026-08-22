@@ -1,9 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
 
-const AMOY_RPC_URL = process.env.AMOY_RPC_URL || "https://rpc-amoy.polygon.technology";
-const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY || "0x0000000000000000000000000000000000000000000000000000000000000000";
-
 module.exports = {
   solidity: {
     version: "0.8.26",
@@ -24,8 +21,8 @@ module.exports = {
       chainId: 31337,
     },
     amoy: {
-      url: AMOY_RPC_URL,
-      accounts: [DEPLOYER_PRIVATE_KEY],
+      url: process.env.AMOY_RPC_URL,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [process.env.DEPLOYER_PRIVATE_KEY] : [],
       chainId: 80002,
     },
   },

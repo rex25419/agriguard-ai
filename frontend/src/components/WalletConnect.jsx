@@ -13,6 +13,28 @@ const WalletConnect = ({ onConnect }) => {
     setError(null);
     try {
       if (window.ethereum) {
+        // Force MetaMask to use Localhost 8545
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x7a69' }], // 31337 in hex
+          });
+        } catch (switchError) {
+          if (switchError.code === 4902) {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: '0x7a69',
+                chainName: 'Hardhat Localhost',
+                rpcUrls: ['http://127.0.0.1:8545'],
+                nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }
+              }],
+            });
+          } else {
+            throw switchError;
+          }
+        }
+
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const address = await signer.getAddress();
