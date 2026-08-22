@@ -1,6 +1,6 @@
 // src/components/PayoutSimulator.jsx
 import React, { useState, useEffect } from 'react';
-import { calculateGraduatedPayout, calculateNextPremium, triggerPayoutCheck } from '../services/contract';
+import { calculateGraduatedPayout, calculateNextPremium, triggerPayoutCheck, simulateOracleScoreUpdate } from '../services/contract';
 import { Calculator, Coins, TrendingUp } from 'lucide-react';
 
 const PayoutSimulator = ({ currentRisk, scoreTimestamp, policy, onPayout }) => {
@@ -12,14 +12,14 @@ const PayoutSimulator = ({ currentRisk, scoreTimestamp, policy, onPayout }) => {
 
   useEffect(() => {
     if (policy) {
-      setSimulatedRisk(currentRisk);
+      setSimulatedRisk(currentRisk > 0 ? currentRisk : 72);
     }
   }, [currentRisk, policy]);
 
   useEffect(() => {
     if (policy) {
-      setPayout(calculateGraduatedPayout(simulatedRisk, policy.maxPayout));
-      setNextPremium(calculateNextPremium(policy.basePremium, simulatedRisk));
+      setPayout(calculateGraduatedPayout(simulatedRisk, parseFloat(policy.maxPayout)));
+      setNextPremium(calculateNextPremium(parseFloat(policy.basePremium), simulatedRisk));
     }
   }, [simulatedRisk, policy]);
 
@@ -27,6 +27,9 @@ const PayoutSimulator = ({ currentRisk, scoreTimestamp, policy, onPayout }) => {
     setLoading(true);
     setError(null);
     try {
+      if (policy && policy.districtId) {
+        await simulateOracleScoreUpdate(policy.districtId, Math.round(simulatedRisk));
+      }
       await triggerPayoutCheck(policy.policyId);
       if (onPayout) onPayout();
     } catch (err) {
@@ -54,8 +57,10 @@ const PayoutSimulator = ({ currentRisk, scoreTimestamp, policy, onPayout }) => {
 
       <div className="mb-6">
         <div className="flex justify-between mb-2">
-          <span className="text-secondary">Risk Score for Calc (simulated slider)</span>
-          <span className="font-bold">{simulatedRisk.toFixed(1)}</span>
+          <span className="text-secondary">Risk Score for Calc (Interactive Slider)</span>
+          <span className={`font-bold ${simulatedRisk > 70 ? 'text-red-400' : simulatedRisk > 40 ? 'text-yellow-400' : 'text-green-400'}`}>
+            {simulatedRisk.toFixed(1)}
+          </span>
         </div>
         <input 
           type="range" 
@@ -99,11 +104,11 @@ const PayoutSimulator = ({ currentRisk, scoreTimestamp, policy, onPayout }) => {
       {error && <div className="text-red-400 text-sm mt-4">{error}</div>}
 
       <button 
-        className="btn btn-primary mt-6 w-full"
+        className="btn btn-primary mt-6 w-full py-3 text-sm font-bold flex items-center justify-center gap-2"
         onClick={handleTriggerPayout}
-        disabled={loading || currentRisk < 40 || isClaimedForEpoch}
+        disabled={loading || simulatedRisk < 40 || isClaimedForEpoch}
       >
-        {loading ? 'Processing...' : isClaimedForEpoch ? 'Claimed for Current Epoch' : 'Check & Trigger Real Payout'}
+        {loading ? 'Processing Claim...' : isClaimedForEpoch ? 'Claimed for Current Epoch' : `Execute Parametric Payout (${payout.toFixed(1)} MATIC)`}
       </button>
     </div>
   );

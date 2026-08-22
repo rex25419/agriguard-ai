@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAllEvents, simulateOracleScoreUpdate, clearSimulationData } from '../services/contract';
-import { Activity, ShieldCheck, RefreshCw, Zap, Trash2 } from 'lucide-react';
+import { fetchAllEvents, clearSimulationData } from '../services/contract';
+import OracleSimulator from './OracleSimulator';
+import { Activity, ShieldCheck, RefreshCw, Trash2 } from 'lucide-react';
 
 const AdminView = () => {
   const [events, setEvents] = useState({ scoreEvents: [], payoutEvents: [], policyEvents: [] });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [simulating, setSimulating] = useState(false);
 
   const loadEvents = async () => {
     setLoading(true);
@@ -22,18 +22,6 @@ const AdminView = () => {
     }
   };
 
-  const handleSimulateScoreUpdate = async () => {
-    setSimulating(true);
-    try {
-      await simulateOracleScoreUpdate("1");
-      await loadEvents();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSimulating(false);
-    }
-  };
-
   const handleClearDemo = async () => {
     clearSimulationData();
     await loadEvents();
@@ -44,7 +32,10 @@ const AdminView = () => {
   }, []);
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6 mt-8">
+    <div className="w-full max-w-6xl mx-auto p-6 mt-4">
+      {/* Interactive District & Oracle Simulator Control Panel */}
+      <OracleSimulator onUpdate={loadEvents} />
+
       <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <Activity size={24} className="text-primary" />
@@ -53,22 +44,12 @@ const AdminView = () => {
 
         <div className="flex items-center gap-3">
           <button 
-            onClick={handleSimulateScoreUpdate} 
-            disabled={simulating} 
-            className="btn btn-primary flex items-center gap-2 p-2 text-sm"
-            title="Fetch ML model risk score and trigger an Oracle update log"
-          >
-            <Zap size={16} className={simulating ? 'animate-pulse' : ''} />
-            {simulating ? 'Simulating...' : 'Simulate Oracle Update'}
-          </button>
-
-          <button 
             onClick={handleClearDemo} 
             className="btn btn-secondary flex items-center gap-2 p-2 text-sm text-red-400 hover:text-red-300"
             title="Reset simulation log data"
           >
             <Trash2 size={16} />
-            Reset Demo
+            Reset Demo Logs
           </button>
 
           <button onClick={loadEvents} disabled={loading} className="btn btn-secondary flex items-center gap-2 p-2">
