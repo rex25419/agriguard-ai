@@ -4,7 +4,7 @@ import PolicyManagerArtifact from '../contracts/PolicyManager.json';
 import RiskOracleArtifact from '../contracts/RiskOracle.json';
 
 const DEFAULT_RPC_URL = import.meta.env.VITE_RPC_URL || 'https://rpc-amoy.polygon.technology';
-const ML_SERVICE_URL = import.meta.env.VITE_ML_SERVICE_URL || 'https://agriguard-ml-service-700192145700.asia-south1.run.app';
+const ML_SERVICE_URL = import.meta.env.VITE_ML_SERVICE_URL || '';
 
 // Initialize provider and contract instances
 let provider;
